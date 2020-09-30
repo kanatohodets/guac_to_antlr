@@ -1828,3 +1828,7 @@ ConditionFor : 'for';
 ConditionForeach : 'foreach';
 
 BuiltinFilehandle : 'STDIN' | 'STDOUT' | 'STDERR' | 'ARGV' | 'ARGVOUT' | 'DATA';
+
+WS
+   : [ \t\n\r] + -> skip
+   ;

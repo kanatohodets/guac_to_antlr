@@ -1,5 +1,19 @@
 lexer grammar PerlLexer;
 
+Semicolon : ';';
+SingleQuote : ['] ;
+DoubleQuote : ["] ;
+
+NonDoubleOrEscapedQuote_Many : NonDoubleOrEscapedQuote+ ;
+fragment NonDoubleOrEscapedQuote : EscapedDoubleQuote | NonDoubleQuote ;
+fragment EscapedDoubleQuote : Escape ["] ;
+fragment NonDoubleQuote : [^"] ;
+
+NonSingleOrEscapedQuote_Many : NonSingleOrEscapedQuote+ ;
+fragment NonSingleOrEscapedQuote : EscapedSingleQuote | NonSingleQuote ;
+fragment EscapedSingleQuote : Escape ['] ;
+fragment NonSingleQuote : [^'] ;
+
 GlobalVariables : '!'
                 | '"'
                 | SigilHash
@@ -176,21 +190,9 @@ DigitBin : [01] ;
 fragment DigitsBin : [01]* ;
 
 Digits : [0-9]+ ;
-SingleQuote : ['] ;
-DoubleQuote : ["] ;
 
-NonDoubleOrEscapedQuote_Many : NonDoubleOrEscapedQuote+ ;
-NonDoubleOrEscapedQuote : EscapedDoubleQuote | NonDoubleQuote ;
-EscapedDoubleQuote : Escape ["] ;
-NonDoubleQuote : [^"] ;
-
-NonSingleOrEscapedQuote_Many : NonSingleOrEscapedQuote+ ;
-NonSingleOrEscapedQuote : EscapedSingleQuote | NonSingleQuote ;
-EscapedSingleQuote : Escape ['] ;
-NonSingleQuote : [^'] ;
 
 Colon : ':';
-Semicolon : ';';
 Escape : '\\';
 
 fragment And : '&';
@@ -562,9 +564,6 @@ WS
    : [ \t\n\r] + -> skip
    ;
   
-SubName : LeadingSubLetter CoreSubLetters ;
-LeadingSubLetter : [a-zA-Z_] ;
-fragment CoreSubLetters : [a-zA-Z0-9_]* ;
 
 /*
 // SubNameNonQLike is for function calls
@@ -589,10 +588,15 @@ SubNameNonQLike :
                 | 'm' AllSubLetters                // m[*]
                 | 'y' AllSubLetters ;              // y[*]
 
+SubName : LeadingSubLetter CoreSubLetters ;
+LeadingSubLetter : [a-zA-Z_] ;
+fragment CoreSubLetters : [a-zA-Z0-9_]* ;
+
 /*
 // Variables are defined using a different ident
 // Namespaced variables ($x::y) might have a different ident
 */
+
 
 VarIdent : NonGlobalVarLetters
          | NonGlobalVarLetters AllVarLetters

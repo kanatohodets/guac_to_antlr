@@ -1,1 +1,4 @@
-use warnings
+sub foo {
+    require strict;
+    return undef;
+}

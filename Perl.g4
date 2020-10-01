@@ -373,11 +373,11 @@ subNameCallExpr : SubNameNonQLike
 
 // Used for defining subs (no limits)
 subNameExpr : SubNameNonQLike
-            | subNameExpr PackageSep SubName ;
+            | subNameExpr PackageSep subName ;
 
-SubName : LeadingSubLetter CoreSubLetters ;
+subName : LeadingSubLetter CoreSubLetter* ;
 LeadingSubLetter : [a-zA-Z_] ;
-fragment CoreSubLetters : [a-zA-Z0-9_]* ;
+CoreSubLetter : [a-zA-Z0-9_] ;
 /*
 // SubNameNonQLike is for function calls
 // They are not allowed to be:
@@ -385,21 +385,21 @@ fragment CoreSubLetters : [a-zA-Z0-9_]* ;
 // s / m / y / tr
 */
 SubNameNonQLike :
-                  NonQLikeLetters                  // [non-qlike]
-                | NonQLikeLetters AllSubLetters    // [non-qlike][*]
+                  NonQLikeLetter+                  // [non-qlike]
+                | NonQLikeLetter+ AllSubLetter+    // [non-qlike][*]
                 | 'q' NonQRWXLetters               // q[non-qrwx]
-                | 'q' NonQRWXLetters AllSubLetters // q[non-qrwx][*]
-                | 'qq' AllSubLetters               // qq[*]
-                | 'qr' AllSubLetters               // qr[*]
-                | 'qw' AllSubLetters               // qw[*]
-                | 'qx' AllSubLetters               // qx[*]
+                | 'q' NonQRWXLetters AllSubLetter+ // q[non-qrwx][*]
+                | 'qq' AllSubLetter+               // qq[*]
+                | 'qr' AllSubLetter+               // qr[*]
+                | 'qw' AllSubLetter+               // qw[*]
+                | 'qx' AllSubLetter+               // qx[*]
                 | 't'                              // t
                 | 't' NonRLetter                   // t[non-r]
-                | 't' NonRLetter AllSubLetters     // t[non-r][*]
-                | 'tr' AllSubLetters               // tr[*]
-                | 's' AllSubLetters                // s[*]
-                | 'm' AllSubLetters                // m[*]
-                | 'y' AllSubLetters ;              // y[*]
+                | 't' NonRLetter AllSubLetter+     // t[non-r][*]
+                | 'tr' AllSubLetter+               // tr[*]
+                | 's' AllSubLetter+                // s[*]
+                | 'm' AllSubLetter+                // m[*]
+                | 'y' AllSubLetter+ ;              // y[*]
 
 /*
 // Variables are defined using a different ident
@@ -1365,7 +1365,7 @@ fragment RegexModifiers : [a-z]*;
 // a -                   l   n - p   r     u -   x   z
 // (Cannot begin with digit, so digits are out)
 */
-NonQLikeLetters : [a-ln-pru-xzA-Z_]+ ;
+NonQLikeLetter : [a-ln-pru-xzA-Z_]+ ;
 
 /*
 // Everything except: q / w / r / x (qq, qw, qr, qx)
@@ -1386,7 +1386,7 @@ NonQRWXLetters : [a-ps-vy-zA-Z0-9]+ ;
 NonRLetter : [a-qs-zA-Z0-9_] ;
 
 // Everything else allowed (including digits)
-AllSubLetters : [a-zA-Z0-9_]+ ;
+AllSubLetter : [a-zA-Z0-9_] ;
 
 IdentComp : [a-zA-Z0-9]+ ;
 PackageSep : '::';

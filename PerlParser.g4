@@ -100,7 +100,8 @@ subDefinition : subAttrsDefinitionSeq subSigsDefinition block
 subAttrsDefinitionSeq : subAttrsDefinition subAttrsDefinitionSeq
                       | subAttrsDefinition ;
 
-subAttrsDefinition : ':' IdentComp+ SubAttrArgs
+// TODO: revisit HACK where the SubAttrArgs token was removed
+subAttrsDefinition : ':' IdentComp+ '(' NonRParenOrEscapedParens* ')'
                    | ':' IdentComp+ ;
 
 subSigsDefinition : parenExpr ;

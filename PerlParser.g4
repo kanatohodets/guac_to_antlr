@@ -65,7 +65,7 @@ statementModifier : conditionIfPostfixExpr
 
 ellipsisStatement : Ellipsis ;
 
-useStatement : OpKeywordUse classIdent versionExpr expression
+useStatement   : OpKeywordUse classIdent versionExpr expression
                | OpKeywordUse classIdent versionExpr
                | OpKeywordUse classIdent expression
                | OpKeywordUse versionExpr

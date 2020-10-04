@@ -376,8 +376,10 @@ subNameCallExpr : SubNameNonQLike
                 | subNameCallExpr PackageSep SubNameNonQLike ;
 
 // Used for defining subs (no limits)
-subNameExpr : SubNameNonQLike
-            | subNameExpr PackageSep SubName ;
+// TODO: remove or package HACK where SubNameNonQLike is needed as a fallback
+// I'm not sure there's a rule ordering in the lexer which removes this need, though.
+subNameExpr : (SubName | SubNameNonQLike)
+            | subNameExpr PackageSep (SubName | SubNameNonQLike) ;
 
 /*
 // Variables are defined using a different ident
@@ -422,10 +424,12 @@ litArray        : LBracket expression RBracket
 litHashEmpty    : LBrace RBrace ;             // name => LitHash
 litHashNonEmpty : LBrace expression RBrace ;  // name => LitHash
 
-litString  : SingleQuote NonSingleOrEscapedQuote_Many SingleQuote
+// TODO: remove HACK with the SubName & co fallback
+litString  : SingleQuote (NonSingleOrEscapedQuote+ | SubName | SubNameNonQLike) SingleQuote
            | SingleQuote SingleQuote ;
 
-interpolString : DoubleQuote NonDoubleOrEscapedQuote_Many DoubleQuote
+// TODO: remove HACK with the SubName & co fallback
+interpolString : DoubleQuote (NonDoubleOrEscapedQuote+ | SubName | SubNameNonQLike) DoubleQuote
                | DoubleQuote DoubleQuote ;
 
 arrowRHS   : arrowDerefCall

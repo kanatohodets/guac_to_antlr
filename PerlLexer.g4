@@ -1,5 +1,6 @@
 lexer grammar PerlLexer;
 
+PhaseName : 'BEGIN' | 'CHECK' | 'INIT' | 'UNITCHECK' | 'END';
 
 OpKeywordAbs : 'abs';
 OpKeywordAccept : 'accept';
@@ -214,13 +215,63 @@ OpKeywordWantarray : 'wantarray';
 OpKeywordWarn : 'warn';
 OpKeywordWrite : 'write';
 
+OpAdd : '+' | '-' | '.';
+
+// END lexer rules with priority 1 from perl BNF
+
+ConditionIf : 'if';
+ConditionElsif : 'elsif';
+ConditionElse : 'else';
+ConditionUnless : 'unless';
+ConditionWhile : 'while';
+ConditionUntil : 'until';
+ConditionFor : OpKeywordFor;
+ConditionForeach : OpKeywordForeach;
+
+/*
+// SubNameNonQLike is for function calls
+// They are not allowed to be:
+// q / qq / qw / qr / qx
+// s / m / y / tr
+*/
+SubNameNonQLike :
+                  NonQLikeLetters                  // [non-qlike]
+                | NonQLikeLetters AllSubLetters    // [non-qlike][*]
+                | 'q' NonQRWXLetters               // q[non-qrwx]
+                | 'q' NonQRWXLetters AllSubLetters // q[non-qrwx][*]
+                | 'qq' AllSubLetters               // qq[*]
+                | 'qr' AllSubLetters               // qr[*]
+                | 'qw' AllSubLetters               // qw[*]
+                | 'qx' AllSubLetters               // qx[*]
+                | 't'                              // t
+                | 't' NonRLetter                   // t[non-r]
+                | 't' NonRLetter AllSubLetters     // t[non-r][*]
+                | 'tr' AllSubLetters               // tr[*]
+                | 's' AllSubLetters                // s[*]
+                | 'm' AllSubLetters                // m[*]
+                | 'y' AllSubLetters ;              // y[*]
+
+SubName : LeadingSubLetter CoreSubLetter* ;
+fragment LeadingSubLetter : [a-zA-Z] ;
+fragment CoreSubLetter : [a-zA-Z0-9] ;
+
+/*
+// Variables are defined using a different ident
+// Namespaced variables ($x::y) might have a different ident
+*/
+
+VarIdent : NonGlobalVarLetters
+         | NonGlobalVarLetters AllVarLetters
+         | '_' AllVarLetters ;
+
+fragment NonGlobalVarLetters : [a-zA-Z]+ ;
+fragment AllVarLetters : [a-zA-Z0-9_]+;
+
 Semicolon : ';';
 SingleQuote : '\'' -> pushMode(STRING);
 DoubleQuote : '"'  -> pushMode(INTERPOLSTRING);
 
-
 PackageSep : '::';
-
 
 NumberDec : NumberDecInt
           | NumberDecInt ExpDec
@@ -312,8 +363,6 @@ UnderscoreSub : '__SUB__';
 UnderscoreData : '__DATA__';
 UnderscoreEnd : '__END__';
 
-PhaseName : 'BEGIN' | 'CHECK' | 'INIT' | 'UNITCHECK' | 'END';
-
 //SubAttrArgs : '(' NonRParenOrEscapedParens_Any ')' ;
 
 OpArrow : '->';
@@ -322,7 +371,6 @@ OpPower : '**';
 OpUnary : '!' | '~' | '\\' | '+' | '-';
 OpRegex : '=~' | '!~';
 OpMulti : '*' | '/' | '%' | 'x';
-OpAdd : '+' | '-' | '.';
 OpShift : Less Less | Greater Greater;
 OpInequal : Less | Greater | '<=' | '>=' | 'lt' | 'gt' | 'le' | 'ge';
 OpEqual : '==' | '!=' | '<=>' | 'eq' | 'ne' | 'cmp';
@@ -369,14 +417,6 @@ OpFileStartTime : '-M';
 OpFileAccessTime : '-A';
 OpFileChangeTime : '-C';
 
-ConditionIf : 'if';
-ConditionElsif : 'elsif';
-ConditionElse : 'else';
-ConditionUnless : 'unless';
-ConditionWhile : 'while';
-ConditionUntil : 'until';
-//ConditionFor : 'for';
-//ConditionForeach : 'foreach';
 
 BuiltinFilehandle : 'STDIN' | 'STDOUT' | 'STDERR' | 'ARGV' | 'ARGVOUT' | 'DATA';
 
@@ -385,44 +425,6 @@ WS
    ;
   
 
-/*
-// SubNameNonQLike is for function calls
-// They are not allowed to be:
-// q / qq / qw / qr / qx
-// s / m / y / tr
-*/
-SubNameNonQLike :
-                  NonQLikeLetters                  // [non-qlike]
-                | NonQLikeLetters AllSubLetters    // [non-qlike][*]
-                | 'q' NonQRWXLetters               // q[non-qrwx]
-                | 'q' NonQRWXLetters AllSubLetters // q[non-qrwx][*]
-                | 'qq' AllSubLetters               // qq[*]
-                | 'qr' AllSubLetters               // qr[*]
-                | 'qw' AllSubLetters               // qw[*]
-                | 'qx' AllSubLetters               // qx[*]
-                | 't'                              // t
-                | 't' NonRLetter                   // t[non-r]
-                | 't' NonRLetter AllSubLetters     // t[non-r][*]
-                | 'tr' AllSubLetters               // tr[*]
-                | 's' AllSubLetters                // s[*]
-                | 'm' AllSubLetters                // m[*]
-                | 'y' AllSubLetters ;              // y[*]
-
-SubName : LeadingSubLetter CoreSubLetter* ;
-fragment LeadingSubLetter : [a-zA-Z] ;
-fragment CoreSubLetter : [a-zA-Z0-9] ;
-
-/*
-// Variables are defined using a different ident
-// Namespaced variables ($x::y) might have a different ident
-*/
-
-VarIdent : NonGlobalVarLetters
-         | NonGlobalVarLetters AllVarLetters
-         | '_' AllVarLetters ;
-
-fragment NonGlobalVarLetters : [a-zA-Z]+ ;
-fragment AllVarLetters : [a-zA-Z0-9_]+;
 
 GlobalVariables : '!'
                 | DoubleQuote

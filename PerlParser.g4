@@ -377,8 +377,11 @@ subNameCallExpr : SubNameNonQLike
                 | subNameCallExpr PackageSep SubNameNonQLike ;
 
 // Used for defining subs (no limits)
-// TODO: remove or package HACK where SubNameNonQLike is needed as a fallback
+// it feels like a HACK where SubNameNonQLike is needed as a fallback, but I
+// think this is pretty much the way to do it in ANTLR.
 // I'm not sure there's a rule ordering in the lexer which removes this need, though.
+// TODO: add a lexer rule for "is a keyword" and add that as fallback so people
+// can override builtins
 subNameExpr : (SubName | SubNameNonQLike)
             | subNameExpr PackageSep (SubName | SubNameNonQLike) ;
 
@@ -389,6 +392,7 @@ subNameExpr : (SubName | SubNameNonQLike)
 // TODO HACK: VarIdent SubName and SubNameNonQLike overlap in substantial ways. This
 // means the lexer will regularly catch SubNameNonQLike when you might prefer it
 // to find VarIdent. As a result, this parse rule needs to tolerate all of them.
+// ALSO add the keyword fallback here
 varIdentExpr : (VarIdent | SubName | SubNameNonQLike)
              | varIdentExpr PackageSep (VarIdent | SubName | SubNameNonQLike);
 

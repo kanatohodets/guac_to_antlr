@@ -633,6 +633,8 @@ OpKeywordQx : 'qx';
 OpKeywordQw : 'qw';
 OpKeywordQr : 'qr';
 
+// TODO: add a lexer rule for "any keyword at all" and allow sub names to fall back to that
+
 mode STRING;
 NonSingleOrEscapedQuote_Many : NonSingleOrEscapedQuote+ ;
 fragment NonSingleOrEscapedQuote : EscapedSingleQuote | NonSingleQuote ;

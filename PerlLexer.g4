@@ -218,8 +218,8 @@ OpKeywordWarn : 'warn';
 OpKeywordWrite : 'write';
 
 Semicolon : ';';
-SingleQuote : '\'' ;
-DoubleQuote : '"' ;
+SingleQuote : '\'' -> pushMode(STRING);
+DoubleQuote : '"'  -> pushMode(INTERPOLSTRING);
 
 
 PackageSep : '::';
@@ -575,15 +575,7 @@ QLikeSubstWithMods : OpKeywordS
 
 fragment RegexModifiers : [a-z]*;
 
-//NonDoubleOrEscapedQuote_Many : NonDoubleOrEscapedQuote+ ;
-NonDoubleOrEscapedQuote : EscapedDoubleQuote | NonDoubleQuote ;
-fragment EscapedDoubleQuote : Escape '"' ;
-fragment NonDoubleQuote : ~'"' ;
 
-//NonSingleOrEscapedQuote_Many : NonSingleOrEscapedQuote+ ;
-NonSingleOrEscapedQuote : EscapedSingleQuote | NonSingleQuote ;
-fragment EscapedSingleQuote : Escape '\'' ;
-fragment NonSingleQuote : ~'\'' ;
 
 fragment NonRParenOrEscapedParens_Any : NonRParenOrEscapedParens* ;
 NonRParenOrEscapedParens : EscapedParens | NonRParen ;
@@ -638,3 +630,17 @@ OpKeywordQq : 'qq';
 OpKeywordQx : 'qx';
 OpKeywordQw : 'qw';
 OpKeywordQr : 'qr';
+
+mode STRING;
+NonSingleOrEscapedQuote_Many : NonSingleOrEscapedQuote+ ;
+fragment NonSingleOrEscapedQuote : EscapedSingleQuote | NonSingleQuote ;
+EndSingleQuote : '\'' -> popMode;
+fragment EscapedSingleQuote : Escape '\'' ;
+fragment NonSingleQuote : ~'\'' ;
+
+mode INTERPOLSTRING;
+NonDoubleOrEscapedQuote_Many : NonDoubleOrEscapedQuote+ ;
+fragment NonDoubleOrEscapedQuote : EscapedDoubleQuote | NonDoubleQuote ;
+EndDoubleQuote : '"' -> popMode ;
+fragment EscapedDoubleQuote : Escape '"' ;
+fragment NonDoubleQuote : ~'"' ;

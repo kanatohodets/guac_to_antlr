@@ -428,13 +428,11 @@ litArray        : LBracket expression RBracket
 litHashEmpty    : LBrace RBrace ;             // name => LitHash
 litHashNonEmpty : LBrace expression RBrace ;  // name => LitHash
 
-// TODO: remove HACK with the SubName & co fallback
-litString  : SingleQuote (NonSingleOrEscapedQuote+ | SubName | SubNameNonQLike) SingleQuote
-           | SingleQuote SingleQuote ;
+litString  : SingleQuote NonSingleOrEscapedQuote_Many EndSingleQuote
+           | SingleQuote EndSingleQuote ;
 
-// TODO: remove HACK with the SubName & co fallback
-interpolString : DoubleQuote (NonDoubleOrEscapedQuote+ | SubName | SubNameNonQLike) DoubleQuote
-               | DoubleQuote DoubleQuote ;
+interpolString : DoubleQuote NonDoubleOrEscapedQuote_Many EndDoubleQuote
+               | DoubleQuote EndDoubleQuote ;
 
 arrowRHS   : arrowDerefCall
            | arrowDerefVariable

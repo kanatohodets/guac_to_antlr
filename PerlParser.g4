@@ -1228,7 +1228,7 @@ qLikeValue : QLikeValueExpr | QLikeValueExprWithMods ;
 
 // LEXER
 
-versionExpr : VersionNumber ;
+versionExpr : NumberDec | VersionNumber ;
 
 litNumber : litNumberDec
           | litNumberOct

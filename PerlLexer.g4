@@ -1,9 +1,6 @@
 lexer grammar PerlLexer;
 
 
-VersionNumber : VersionNumberSegments
-              | 'v' VersionNumberSegments ;
-
 OpKeywordAbs : 'abs';
 OpKeywordAccept : 'accept';
 OpKeywordAlarm : 'alarm';
@@ -224,13 +221,6 @@ DoubleQuote : '"'  -> pushMode(INTERPOLSTRING);
 
 PackageSep : '::';
 
-VersionNumberSegments : VersionNumberSegment '.' VersionNumberSegment '.' VersionNumberSegment
-                      | VersionNumberSegment '.' VersionNumberSegments
-                      | VersionNumberSegment ;
-
-VersionNumberSegment : [0-9] [0-9] [0-9]
-                     | [0-9] [0-9]
-                     | [0-9] ;
 
 NumberDec : NumberDecInt
           | NumberDecInt ExpDec
@@ -257,6 +247,7 @@ ExpDec : [eE] [+-] ExpDecExp
        | [eE] [_] [+-] ExpDecExp
        | [eE] ExpDecExp ;
 
+
 ExpDecExp : Underbars DigitDec DigitsDec ;
 Underbars : [_]+ ;
 
@@ -274,7 +265,18 @@ fragment DigitsHex : [0-9a-fA-F]* ;
 DigitBin : [01] ;
 fragment DigitsBin : [01]* ;
 
-Digits : [0-9]+ ;
+Digits : DigitDec+ ;
+
+VersionNumber : VersionNumberSegments
+              | 'v' VersionNumberSegments ;
+
+fragment VersionNumberSegments : VersionNumberSegment '.' VersionNumberSegment '.' VersionNumberSegment
+                               | VersionNumberSegment '.' VersionNumberSegments
+                               | VersionNumberSegment ;
+
+fragment VersionNumberSegment : DigitDec DigitDec DigitDec
+                              | DigitDec DigitDec
+                              | DigitDec ;
 
 Colon : ':';
 Escape : '\\';

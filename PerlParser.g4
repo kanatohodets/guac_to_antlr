@@ -386,8 +386,11 @@ subNameExpr : (SubName | SubNameNonQLike)
 // Variables are defined using a different ident
 // Namespaced variables ($x::y) might have a different ident
 */
-varIdentExpr : VarIdent
-             | varIdentExpr PackageSep VarIdent ;
+// TODO HACK: VarIdent SubName and SubNameNonQLike overlap in substantial ways. This
+// means the lexer will regularly catch SubNameNonQLike when you might prefer it
+// to find VarIdent. As a result, this parse rule needs to tolerate all of them.
+varIdentExpr : (VarIdent | SubName | SubNameNonQLike)
+             | varIdentExpr PackageSep (VarIdent | SubName | SubNameNonQLike);
 
 /*
 // This uses the same definition as subroutine names
